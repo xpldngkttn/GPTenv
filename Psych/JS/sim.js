@@ -23,12 +23,12 @@ const runner = Runner.create();
 Runner.run(runner, engine);
 
 // ----- Simulation options -----
-const PARTICLE_COUNT = 100;
+const PARTICLE_COUNT = 200;
 const DEFAULT_PARTICLE_OPTIONS = {
-  radius: 5,
-  restitution: 2,
-  frictionAir: 0.2,
-  initialEnergy: 0.5
+  radius: 10,
+  restitution: 1.1,
+  frictionAir: 0.25,
+  initialEnergy: 5
 };
 
 class Particle {
@@ -108,4 +108,3 @@ Matter.Events.on(engine, 'beforeUpdate', () => {
     p.update(mousePos, { width, height });
   }
 });
-
