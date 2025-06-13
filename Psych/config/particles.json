@@ -1,0 +1,40 @@
+{
+  "classes": [
+    {
+      "className": "ObjectA",
+      "color": "#e6194b",
+      "radius": 5,
+      "restitution": 2,
+      "frictionAir": 0.2,
+      "initialEnergy": 0.5,
+      "tags": {"tag0": 0.5, "tag1": -0.3, "tag2": 0.1, "tag3": 0.2, "tag4": 0.3, "tag5": -0.2, "tag6": 0.4, "tag7": 0.0, "tag8": -0.1, "tag9": 0.6},
+      "knockRes": {"tag0": 0.015, "tag1": 0.02, "tag2": -0.01, "tag3": 0.02, "tag4": -0.015, "tag5": 0.025, "tag6": -0.01, "tag7": 0.03, "tag8": 0.02, "tag9": -0.02},
+      "attractCoef": {"tag0": 0.0005, "tag1": -0.0004, "tag2": 0.0002, "tag3": 0.0003, "tag4": -0.0001, "tag5": 0.0005, "tag6": -0.0002, "tag7": 0.0004, "tag8": 0.0003, "tag9": -0.0003},
+      "energyCoef": {"tag0": 0.03, "tag1": 0.01, "tag2": -0.02, "tag3": 0.01, "tag4": 0.02, "tag5": -0.03, "tag6": 0.02, "tag7": 0.0, "tag8": 0.03, "tag9": -0.01}
+    },
+    {
+      "className": "ObjectB",
+      "color": "#3cb44b",
+      "radius": 6,
+      "restitution": 1.8,
+      "frictionAir": 0.2,
+      "initialEnergy": 0.5,
+      "tags": {"tag0": -0.4, "tag1": 0.6, "tag2": -0.1, "tag3": 0.3, "tag4": 0.2, "tag5": -0.5, "tag6": 0.1, "tag7": 0.5, "tag8": 0.2, "tag9": -0.3},
+      "knockRes": {"tag0": -0.01, "tag1": 0.02, "tag2": 0.015, "tag3": -0.02, "tag4": 0.01, "tag5": 0.02, "tag6": 0.015, "tag7": -0.025, "tag8": 0.02, "tag9": 0.02},
+      "attractCoef": {"tag0": -0.0004, "tag1": 0.0006, "tag2": -0.0001, "tag3": 0.0003, "tag4": 0.0002, "tag5": -0.0005, "tag6": 0.0001, "tag7": 0.0005, "tag8": 0.0003, "tag9": -0.0003},
+      "energyCoef": {"tag0": -0.02, "tag1": 0.03, "tag2": 0.02, "tag3": -0.01, "tag4": 0.03, "tag5": -0.02, "tag6": 0.01, "tag7": 0.02, "tag8": 0.02, "tag9": -0.03}
+    },
+    {
+      "className": "ObjectC",
+      "color": "#ffe119",
+      "radius": 4,
+      "restitution": 2,
+      "frictionAir": 0.2,
+      "initialEnergy": 0.5,
+      "tags": {"tag0": 0.1, "tag1": 0.1, "tag2": 0.5, "tag3": -0.2, "tag4": 0.4, "tag5": 0.2, "tag6": -0.3, "tag7": -0.2, "tag8": 0.4, "tag9": 0.2},
+      "knockRes": {"tag0": 0.02, "tag1": 0.015, "tag2": 0.02, "tag3": -0.015, "tag4": 0.025, "tag5": 0.02, "tag6": -0.02, "tag7": -0.015, "tag8": 0.015, "tag9": 0.02},
+      "attractCoef": {"tag0": 0.0002, "tag1": 0.0002, "tag2": 0.0005, "tag3": -0.0003, "tag4": 0.0004, "tag5": 0.0003, "tag6": -0.0004, "tag7": -0.0002, "tag8": 0.0004, "tag9": 0.0002},
+      "energyCoef": {"tag0": 0.01, "tag1": 0.01, "tag2": 0.03, "tag3": -0.02, "tag4": 0.02, "tag5": 0.01, "tag6": -0.03, "tag7": -0.01, "tag8": 0.03, "tag9": 0.01}
+    }
+  ]
+}
