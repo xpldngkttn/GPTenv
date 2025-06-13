@@ -1,5 +1,7 @@
 const { Engine, Render, Runner, Bodies, World, Vector } = Matter;
 
+const TAG_NAMES = Array.from({ length: 10 }, (_, i) => `tag${i}`);
+
 const engine = Engine.create();
 const world = engine.world;
 engine.gravity.y = 0;
@@ -22,13 +24,22 @@ Render.run(render);
 const runner = Runner.create();
 Runner.run(runner, engine);
 
-// ----- Simulation options -----
 const PARTICLE_COUNT = 100;
+
+function blankTagMap() {
+  return TAG_NAMES.reduce((o, t) => { o[t] = 0; return o; }, {});
+}
+
 const DEFAULT_PARTICLE_OPTIONS = {
   radius: 5,
   restitution: 2,
   frictionAir: 0.2,
-  initialEnergy: 0.5
+  initialEnergy: 0.5,
+  color: '#0ff',
+  tags: blankTagMap(),
+  knockRes: blankTagMap(),
+  attractCoef: blankTagMap(),
+  energyCoef: blankTagMap()
 };
 
 class Particle {
@@ -36,11 +47,16 @@ class Particle {
     const opts = { ...DEFAULT_PARTICLE_OPTIONS, ...options };
     this.radius = opts.radius;
     this.energy = opts.initialEnergy;
+    this.color = opts.color;
+    this.tags = { ...blankTagMap(), ...opts.tags };
+    this.knockRes = { ...blankTagMap(), ...opts.knockRes };
+    this.attractCoef = { ...blankTagMap(), ...opts.attractCoef };
+    this.energyCoef = { ...blankTagMap(), ...opts.energyCoef };
     this.state = 'idle';
     this.body = Bodies.circle(x, y, this.radius, {
       restitution: opts.restitution,
       frictionAir: opts.frictionAir,
-      render: { fillStyle: '#0ff' }
+      render: { fillStyle: this.color }
     });
   }
 
@@ -58,14 +74,12 @@ class Particle {
     }
     this.energy = Math.max(0, this.energy - 0.005);
 
-    const color = Math.floor(this.energy * 255);
-    body.render.fillStyle = `rgb(0, ${color}, 255)`;
+    body.render.fillStyle = this.color;
 
     if (dist > 0) {
       const norm = Vector.normalise(dir);
       const forceMag = 0.001 + this.energy * 0.002;
-      const force = Vector.mult(norm, forceMag);
-      Matter.Body.applyForce(body, body.position, force);
+      Matter.Body.applyForce(body, body.position, Vector.mult(norm, forceMag));
     }
 
     let { x, y } = body.position;
@@ -86,26 +100,79 @@ class Particle {
       });
     }
   }
+
+  interactWith(other) {
+    TAG_NAMES.forEach(tag => {
+      const val = other.tags[tag] || 0;
+      const kb = val * (this.knockRes[tag] || 0);
+      if (kb) {
+        const dir = Vector.sub(this.body.position, other.body.position);
+        const norm = Vector.normalise(dir);
+        Matter.Body.applyForce(this.body, this.body.position, Vector.mult(norm, kb));
+      }
+      const att = val * (this.attractCoef[tag] || 0);
+      if (att) {
+        const dir = Vector.sub(other.body.position, this.body.position);
+        const norm = Vector.normalise(dir);
+        Matter.Body.applyForce(this.body, this.body.position, Vector.mult(norm, att));
+      }
+      const dE = val * (this.energyCoef[tag] || 0);
+      if (dE) {
+        this.energy = Math.max(0, Math.min(1, this.energy + dE));
+      }
+    });
+  }
 }
 
-// Create particles using the Particle class
 const particles = [];
-for (let i = 0; i < PARTICLE_COUNT; i++) {
-  const p = new Particle(Math.random() * width, Math.random() * height);
-  particles.push(p);
-  World.add(world, p.body);
+let config;
+
+async function loadConfig() {
+  const res = await fetch('config/particles.json');
+  config = await res.json();
 }
 
-// Mouse tracking
+function createParticles() {
+  if (!config) return;
+  const classes = config.classes || [];
+  const perClass = Math.max(1, Math.floor(PARTICLE_COUNT / classes.length));
+  for (const cls of classes) {
+    for (let i = 0; i < perClass; i++) {
+      const p = new Particle(
+        Math.random() * width,
+        Math.random() * height,
+        cls
+      );
+      particles.push(p);
+      World.add(world, p.body);
+    }
+  }
+}
+
 let mousePos = { x: width / 2, y: height / 2 };
 document.addEventListener('mousemove', e => {
   mousePos = { x: e.clientX, y: e.clientY };
 });
 
-// Apply attraction force
 Matter.Events.on(engine, 'beforeUpdate', () => {
   for (const p of particles) {
     p.update(mousePos, { width, height });
   }
+  processInteractions();
 });
 
+function processInteractions() {
+  for (let i = 0; i < particles.length; i++) {
+    for (let j = i + 1; j < particles.length; j++) {
+      const a = particles[i];
+      const b = particles[j];
+      const dist = Vector.magnitude(Vector.sub(a.body.position, b.body.position));
+      if (dist < a.radius + b.radius + 20) {
+        a.interactWith(b);
+        b.interactWith(a);
+      }
+    }
+  }
+}
+
+loadConfig().then(createParticles);
