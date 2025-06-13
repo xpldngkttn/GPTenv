@@ -33,6 +33,10 @@ const DEFAULT_PARTICLE_OPTIONS = {
   initialEnergy: 0.5
 };
 
+function blankTagMap() {
+  return TAG_NAMES.reduce((o, t) => { o[t] = 0; return o; }, {});
+}
+
 class Particle {
   constructor(x, y, options = {}) {
     const opts = { ...DEFAULT_PARTICLE_OPTIONS, ...options };
@@ -54,22 +58,27 @@ class Particle {
   update(mousePos, bounds) {
     const { width, height } = bounds;
     const body = this.body;
-    const dir = Vector.sub(mousePos, body.position);
+    const dir = Vector.sub(body.position, body.position);
     const dist = Vector.magnitude(dir);
 
     if (dist < 100) {
       this.state = 'active';
-      this.energy = Math.min(1, this.energy + 0.02);
+      this.energy += 0.002;
+      // console.log("inside");
+      // console.log(this.energy);
     } else {
       this.state = 'idle';
+      // console.log("outside")
+      // console.log(this.energy)
     }
-    this.energy = Math.max(0, this.energy - 0.005);
+    this.energy = Math.max(0, this.energy - 0.001);
 
     body.render.fillStyle = this.color;
 
-    if (dist > 0) {
+    if (dist > 30) {
       const norm = Vector.normalise(dir);
-      const forceMag = 0.001 + this.energy * 0.002;
+      const forceMag = Math.max(0, 0.001 + this.energy * 0.002);
+      // console.log(forceMag)
       Matter.Body.applyForce(body, body.position, Vector.mult(norm, forceMag));
     }
 
@@ -136,6 +145,7 @@ function createParticles() {
       );
       particles.push(p);
       World.add(world, p.body);
+      console.log("Particle Created")
     }
   }
 }
@@ -151,4 +161,20 @@ Matter.Events.on(engine, 'beforeUpdate', () => {
   }
   processInteractions();
 });
+
+function processInteractions() {
+  for (let i = 0; i < particles.length; i++) {
+    for (let j = i + 1; j < particles.length; j++) {
+      const a = particles[i];
+      const b = particles[j];
+      const dist = Vector.magnitude(Vector.sub(a.body.position, b.body.position));
+      if (dist < a.radius + b.radius + 20) {
+        a.interactWith(b);
+        b.interactWith(a);
+      }
+    }
+  }
+}
+
+loadConfig().then(createParticles);
 
