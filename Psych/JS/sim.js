@@ -47,6 +47,7 @@ class Particle {
     this.knockRes = { ...blankTagMap(), ...opts.knockRes };
     this.attractCoef = { ...blankTagMap(), ...opts.attractCoef };
     this.energyCoef = { ...blankTagMap(), ...opts.energyCoef };
+    this.mouseAttract = opts.mouseAttract ?? 1;
     this.state = 'idle';
     this.body = Bodies.circle(x, y, this.radius, {
       restitution: opts.restitution,
@@ -58,7 +59,7 @@ class Particle {
   update(mousePos, bounds) {
     const { width, height } = bounds;
     const body = this.body;
-    const dir = Vector.sub(body.position, body.position);
+    const dir = Vector.sub(mousePos, body.position);
     const dist = Vector.magnitude(dir);
 
     if (dist < 100) {
@@ -75,10 +76,9 @@ class Particle {
 
     body.render.fillStyle = this.color;
 
-    if (dist > 30) {
+    if (dist > 30 && this.mouseAttract) {
       const norm = Vector.normalise(dir);
-      const forceMag = Math.max(0, 0.001 + this.energy * 0.002);
-      // console.log(forceMag)
+      const forceMag = this.mouseAttract * Math.max(0, 0.001 + this.energy * 0.002);
       Matter.Body.applyForce(body, body.position, Vector.mult(norm, forceMag));
     }
 
@@ -102,22 +102,22 @@ class Particle {
   }
 
   interactWith(other) {
+    const toOther = Vector.sub(other.body.position, this.body.position);
+    const dist = Vector.magnitude(toOther);
     TAG_NAMES.forEach(tag => {
       const val = other.tags[tag] || 0;
       const kb = val * (this.knockRes[tag] || 0);
-      if (kb) {
-        const dir = Vector.sub(this.body.position, other.body.position);
-        const norm = Vector.normalise(dir);
+      if (kb && dist < this.radius + other.radius + 20) {
+        const norm = Vector.normalise(Vector.mult(toOther, -1));
         Matter.Body.applyForce(this.body, this.body.position, Vector.mult(norm, kb));
       }
       const att = val * (this.attractCoef[tag] || 0);
       if (att) {
-        const dir = Vector.sub(other.body.position, this.body.position);
-        const norm = Vector.normalise(dir);
+        const norm = Vector.normalise(toOther);
         Matter.Body.applyForce(this.body, this.body.position, Vector.mult(norm, att));
       }
       const dE = val * (this.energyCoef[tag] || 0);
-      if (dE) {
+      if (dE && dist < this.radius + other.radius + 20) {
         this.energy = Math.max(0, Math.min(1, this.energy + dE));
       }
     });
@@ -167,11 +167,8 @@ function processInteractions() {
     for (let j = i + 1; j < particles.length; j++) {
       const a = particles[i];
       const b = particles[j];
-      const dist = Vector.magnitude(Vector.sub(a.body.position, b.body.position));
-      if (dist < a.radius + b.radius + 20) {
-        a.interactWith(b);
-        b.interactWith(a);
-      }
+      a.interactWith(b);
+      b.interactWith(a);
     }
   }
 }
