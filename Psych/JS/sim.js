@@ -30,7 +30,6 @@ const DEFAULT_PARTICLE_OPTIONS = {
   radius: 5,
   restitution: 2,
   frictionAir: 0.2,
-  initialEnergy: 0.5
 };
 
 function blankTagMap() {
@@ -41,12 +40,11 @@ class Particle {
   constructor(x, y, options = {}) {
     const opts = { ...DEFAULT_PARTICLE_OPTIONS, ...options };
     this.radius = opts.radius;
-    this.energy = opts.initialEnergy;
     this.color = opts.color;
     this.tags = { ...blankTagMap(), ...opts.tags };
     this.knockRes = { ...blankTagMap(), ...opts.knockRes };
     this.attractCoef = { ...blankTagMap(), ...opts.attractCoef };
-    this.energyCoef = { ...blankTagMap(), ...opts.energyCoef };
+    this.opscale = { ...blankTagMap(), ...opts.opscale };
     this.mouseAttract = opts.mouseAttract ?? 1;
     this.state = 'idle';
     this.body = Bodies.circle(x, y, this.radius, {
@@ -62,23 +60,11 @@ class Particle {
     const dir = Vector.sub(mousePos, body.position);
     const dist = Vector.magnitude(dir);
 
-    if (dist < 100) {
-      this.state = 'active';
-      this.energy += 0.002;
-      // console.log("inside");
-      // console.log(this.energy);
-    } else {
-      this.state = 'idle';
-      // console.log("outside")
-      // console.log(this.energy)
-    }
-    this.energy = Math.max(0, this.energy - 0.001);
-
     body.render.fillStyle = this.color;
 
     if (dist > 30 && this.mouseAttract) {
       const norm = Vector.normalise(dir);
-      const forceMag = this.mouseAttract * Math.max(0, 0.001 + this.energy * 0.002);
+      const forceMag = this.mouseAttract * 0.001;
       Matter.Body.applyForce(body, body.position, Vector.mult(norm, forceMag));
     }
 
@@ -115,10 +101,6 @@ class Particle {
       if (att) {
         const norm = Vector.normalise(toOther);
         Matter.Body.applyForce(this.body, this.body.position, Vector.mult(norm, att));
-      }
-      const dE = val * (this.energyCoef[tag] || 0);
-      if (dE && dist < this.radius + other.radius + 20) {
-        this.energy = Math.max(0, Math.min(1, this.energy + dE));
       }
     });
   }
