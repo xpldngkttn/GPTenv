@@ -36,6 +36,13 @@ function blankTagMap() {
   return TAG_NAMES.reduce((o, t) => { o[t] = 0; return o; }, {});
 }
 
+function randomTagMap() {
+  return TAG_NAMES.reduce((o, t) => {
+    o[t] = Math.random();
+    return o;
+  }, {});
+}
+
 class Particle {
   constructor(x, y, options = {}) {
     const opts = { ...DEFAULT_PARTICLE_OPTIONS, ...options };
@@ -120,10 +127,16 @@ function createParticles() {
   const perClass = Math.max(1, Math.floor(PARTICLE_COUNT / classes.length));
   for (const cls of classes) {
     for (let i = 0; i < perClass; i++) {
+      const randOpts = {
+        ...cls,
+        tags: randomTagMap(),
+        knockRes: randomTagMap(),
+        attractCoef: randomTagMap(),
+      };
       const p = new Particle(
         Math.random() * width,
         Math.random() * height,
-        cls
+        randOpts
       );
       particles.push(p);
       World.add(world, p.body);
