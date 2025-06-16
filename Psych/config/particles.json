@@ -7,20 +7,9 @@
       "restitution": 1.01,
       "frictionAir": 0.3,
       "mouseAttract": 1,
-      "tags": {"tag0": 1, "tag1": 0, "tag2": 1},
-      "knockRes": {"tag0": 0.0005, "tag1": 0.0, "tag2": 0.0005},
-      "attractCoef": {"tag0": 0.000015, "tag1": 0.0, "tag2": 0.000015}
-    },
-    {
-      "className": "chair",
-      "color": "#A020F0",
-      "radius": 15,
-      "restitution": 1.01,
-      "frictionAir": 0.3,
-      "mouseAttract": 0,
-      "tags": {"tag0": 0, "tag1": 1, "tag2": 1},
-      "knockRes": {"tag0": 0.0005, "tag1": 0.0005, "tag2": 0.0005},
-      "attractCoef": {"tag0": -0.000015, "tag1": 0.00003, "tag2": -0.000015}
+      "tags": {},
+      "knockRes": {},
+      "attractCoef": {}
     }
   ]
 }

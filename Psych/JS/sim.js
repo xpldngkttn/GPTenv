@@ -24,35 +24,28 @@ Render.run(render);
 const runner = Runner.create();
 Runner.run(runner, engine);
 
-// ----- Simulation options -----
 const PARTICLE_COUNT = 100;
-const DEFAULT_PARTICLE_OPTIONS = {
-  radius: 5,
-  restitution: 2,
-  frictionAir: 0.2,
-};
 
 function blankTagMap() {
   return TAG_NAMES.reduce((o, t) => { o[t] = 0; return o; }, {});
 }
 
-function randomTagMap() {
+function randomTagMap(min, max) {
   return TAG_NAMES.reduce((o, t) => {
-    o[t] = Math.random();
+    o[t] = Math.random() * (max - min) + min;
     return o;
   }, {});
 }
 
 class Particle {
   constructor(x, y, options = {}) {
-    const opts = { ...DEFAULT_PARTICLE_OPTIONS, ...options };
+    const opts = options;
     this.radius = opts.radius;
     this.color = opts.color;
-    this.tags = { ...blankTagMap(), ...opts.tags };
-    this.knockRes = { ...blankTagMap(), ...opts.knockRes };
-    this.attractCoef = { ...blankTagMap(), ...opts.attractCoef };
-    this.opscale = { ...blankTagMap(), ...opts.opscale };
-    this.mouseAttract = opts.mouseAttract ?? 1;
+    this.tags = opts.tags;
+    this.knockRes = opts.knockRes;
+    this.attractCoef = opts.attractCoef;
+    this.mouseAttract = opts.mouseAttract;
     this.state = 'idle';
     this.body = Bodies.circle(x, y, this.radius, {
       restitution: opts.restitution,
@@ -129,15 +122,16 @@ function createParticles() {
     for (let i = 0; i < perClass; i++) {
       const randOpts = {
         ...cls,
-        tags: randomTagMap(),
-        knockRes: randomTagMap(),
-        attractCoef: randomTagMap(),
+        tags: randomTagMap(-1,1),
+        knockRes: randomTagMap(0,0.001),
+        attractCoef: randomTagMap(-0.0005, 0.0005),
       };
       const p = new Particle(
         Math.random() * width,
         Math.random() * height,
         randOpts
       );
+      console.log("Creating Particle", p);
       particles.push(p);
       World.add(world, p.body);
       console.log("Particle Created")
