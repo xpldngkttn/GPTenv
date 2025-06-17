@@ -17,8 +17,8 @@ const engine = Engine.create();
 const world = engine.world;
 engine.gravity.y = 0;
 
-const width = window.innerWidth + 50;
-const height = window.innerHeight + 50;
+const width = window.innerWidth;
+const height = window.innerHeight;
 
 const render = Render.create({
   element: document.body,
@@ -89,19 +89,16 @@ class Particle {
     let { x, y } = body.position;
     const r = this.radius;
 
-    if (x - r < 0 || x + r > width) {
-      body.velocity.x *= -1;
-      Matter.Body.setPosition(body, {
-        x: Math.max(r, Math.min(x, width - r)),
-        y
-      });
+    if (x - r > width) {
+      Matter.Body.setPosition(body, { x: -r, y });
+    } else if (x + r < 0) {
+      Matter.Body.setPosition(body, { x: width + r, y });
     }
-    if (y - r < 0 || y + r > height) {
-      body.velocity.y *= -1;
-      Matter.Body.setPosition(body, {
-        x,
-        y: Math.max(r, Math.min(y, height - r))
-      });
+
+    if (y - r > height) {
+      Matter.Body.setPosition(body, { x, y: -r });
+    } else if (y + r < 0) {
+      Matter.Body.setPosition(body, { x, y: height + r });
     }
   }
 
