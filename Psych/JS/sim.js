@@ -57,7 +57,7 @@ class Particle {
     this.knockRes = opts.knockRes;
     this.attractCoef = opts.attractCoef;
     this.mouseAttract = opts.mouseAttract;
-    this.susceptibility = opts.susceptibility;
+    this.suscept = opts.suscept;
     this.state = 'idle';
     this.body = Bodies.circle(x, y, this.radius, {
       restitution: opts.restitution,
@@ -139,6 +139,7 @@ function createParticles() {
         tags: randomTagMap(-1,1),
         knockRes: randomTagMap(0,0.001),
         attractCoef: randomTagMap(-0.0005, 0.0005),
+        suscept: randomTagMap(0, 1),
       };
       const p = new Particle(
         Math.random() * width,
