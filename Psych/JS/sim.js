@@ -37,6 +37,9 @@ Runner.run(runner, engine);
 
 const PARTICLE_COUNT = 100;
 
+// Map Matter bodies to their owning Particle for easy lookup during events
+const bodyToParticle = new Map();
+
 function blankTagMap() {
   return TAG_NAMES.reduce((o, t) => { o[t] = 0; return o; }, {});
 }
@@ -148,6 +151,7 @@ function createParticles() {
       );
       console.log("Creating Particle", p);
       particles.push(p);
+      bodyToParticle.set(p.body, p);
       World.add(world, p.body);
       console.log("Particle Created")
     }
@@ -164,6 +168,29 @@ Matter.Events.on(engine, 'beforeUpdate', () => {
     p.update(mousePos, { width, height });
   }
   processInteractions();
+});
+
+// Update tag values when particles collide
+function handleCollision(a, b) {
+  TAG_NAMES.forEach(tag => {
+    const aTag = a.tags[tag] || 0;
+    const bTag = b.tags[tag] || 0;
+    const aSus = a.suscept[tag] || 0;
+    const bSus = b.suscept[tag] || 0;
+    a.tags[tag] = aTag + aSus * (bTag - aTag);
+    b.tags[tag] = bTag + bSus * (aTag - bTag);
+  });
+}
+
+// Listen for collisions from Matter.js
+Matter.Events.on(engine, 'collisionStart', event => {
+  event.pairs.forEach(({ bodyA, bodyB }) => {
+    const a = bodyToParticle.get(bodyA);
+    const b = bodyToParticle.get(bodyB);
+    if (a && b) {
+      handleCollision(a, b);
+    }
+  });
 });
 
 function processInteractions() {
