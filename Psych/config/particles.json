@@ -7,6 +7,7 @@
       "restitution": 1.01,
       "frictionAir": 0.3,
       "mouseAttract": 1,
+      "mouseAttractRadius": 100,
       "tags": {},
       "knockRes": {},
       "attractCoef": {},

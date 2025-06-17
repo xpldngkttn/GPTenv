@@ -60,6 +60,7 @@ class Particle {
     this.knockRes = opts.knockRes;
     this.attractCoef = opts.attractCoef;
     this.mouseAttract = opts.mouseAttract;
+    this.mouseAttractradius = opts.mouseAttractRadius;
     this.suscept = opts.suscept;
     this.state = 'idle';
     this.body = Bodies.circle(x, y, this.radius, {
@@ -142,7 +143,7 @@ function createParticles() {
         tags: randomTagMap(-1,1),
         knockRes: randomTagMap(0,0.001),
         attractCoef: randomTagMap(-0.0005, 0.0005),
-        suscept: randomTagMap(0, 1),
+        suscept: randomTagMap(-1, 1),
       };
       const p = new Particle(
         Math.random() * width,
@@ -173,12 +174,12 @@ Matter.Events.on(engine, 'beforeUpdate', () => {
 // Update tag values when particles collide
 function handleCollision(a, b) {
   TAG_NAMES.forEach(tag => {
-    const aTag = a.tags[tag] || 0;
-    const bTag = b.tags[tag] || 0;
-    const aSus = a.suscept[tag] || 0;
-    const bSus = b.suscept[tag] || 0;
-    a.tags[tag] = aTag + aSus * (bTag - aTag);
-    b.tags[tag] = bTag + bSus * (aTag - bTag);
+    const aTag = a.tags[tag];
+    const bTag = b.tags[tag];
+    const aSus = a.suscept[tag];
+    const bSus = b.suscept[tag];
+    a.tags[tag] = Math.min(1, Math.max(-1, aTag + aSus * (bTag - aTag)));
+    b.tags[tag] = Math.min(1, Math.max(-1, bTag + bSus * (aTag - bTag)));
   });
 }
 
