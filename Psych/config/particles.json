@@ -9,7 +9,8 @@
       "mouseAttract": 1,
       "tags": {},
       "knockRes": {},
-      "attractCoef": {}
+      "attractCoef": {},
+      "suscept": {}
     }
   ]
 }

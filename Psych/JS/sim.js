@@ -57,12 +57,14 @@ class Particle {
     this.knockRes = opts.knockRes;
     this.attractCoef = opts.attractCoef;
     this.mouseAttract = opts.mouseAttract;
+    this.susceptibility = opts.susceptibility;
     this.state = 'idle';
     this.body = Bodies.circle(x, y, this.radius, {
       restitution: opts.restitution,
       frictionAir: opts.frictionAir,
       render: { fillStyle: this.color }
     });
+    
   }
 
   update(mousePos, bounds) {
