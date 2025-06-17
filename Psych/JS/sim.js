@@ -2,6 +2,17 @@ const { Engine, Render, Runner, Bodies, World, Vector } = Matter;
 
 const TAG_NAMES = Array.from({ length: 6 }, (_, i) => `tag${i}`);
 
+function tagValueToHex(val) {
+  const clamped = Math.max(-1, Math.min(1, val));
+  const scaled = Math.round(((clamped + 1) / 2) * 15);
+  return scaled.toString(16);
+}
+
+function computeColorFromTags(tags) {
+  const digits = TAG_NAMES.map(t => tagValueToHex(tags[t] || 0));
+  return `#${digits.join('')}`;
+}
+
 const engine = Engine.create();
 const world = engine.world;
 engine.gravity.y = 0;
@@ -41,8 +52,8 @@ class Particle {
   constructor(x, y, options = {}) {
     const opts = options;
     this.radius = opts.radius;
-    this.color = opts.color;
     this.tags = opts.tags;
+    this.color = computeColorFromTags(this.tags);
     this.knockRes = opts.knockRes;
     this.attractCoef = opts.attractCoef;
     this.mouseAttract = opts.mouseAttract;
@@ -60,6 +71,7 @@ class Particle {
     const dir = Vector.sub(mousePos, body.position);
     const dist = Vector.magnitude(dir);
 
+    this.color = computeColorFromTags(this.tags);
     body.render.fillStyle = this.color;
 
     if (dist > 30 && this.mouseAttract) {

@@ -8,7 +8,10 @@ values for each particle. Default ranges and visual properties still come from
 
 Each particle is an instance of a `Particle` class that stores its Matter.js
 body, current state, and an **energy** value. Energy changes based on proximity
-to the mouse and influences both color and attraction strength.
+to the mouse and influences both color and attraction strength. The visible
+color of a particle is automatically generated from its six tag values: each
+tag maps to a single hexadecimal digit in the `#RRGGBB` code, so different tag
+combinations produce different colors.
 
 Particle properties like radius and restitution can be tweaked in
 `DEFAULT_PARTICLE_OPTIONS` inside `Psych/JS/sim.js`.
