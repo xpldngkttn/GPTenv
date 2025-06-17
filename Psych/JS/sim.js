@@ -58,8 +58,8 @@ class Particle {
     this.tags = opts.tags;
     this.color = computeColorFromTags(this.tags);
     this.knockRes = opts.knockRes;
-    this.attractCoef = opts.attractCoef;
     this.mouseAttract = opts.mouseAttract;
+    this.attractCoef = opts.attractCoef;
     this.mouseAttractradius = opts.mouseAttractRadius;
     this.suscept = opts.suscept;
     this.state = 'idle';
@@ -82,7 +82,7 @@ class Particle {
 
     if (dist > 30 && this.mouseAttract) {
       const norm = Vector.normalise(dir);
-      const forceMag = this.mouseAttract * 0.001;
+      const forceMag = this.mouseAttract * 0.01;
       Matter.Body.applyForce(body, body.position, Vector.mult(norm, forceMag));
     }
 
@@ -141,6 +141,7 @@ function createParticles() {
         knockRes: randomTagMap(0,0.001),
         attractCoef: randomTagMap(-0.0005, 0.0005),
         suscept: randomTagMap(-1, 1),
+        mouseAttract: Math.random(),
       };
       const p = new Particle(
         Math.random() * width,
@@ -151,7 +152,6 @@ function createParticles() {
       particles.push(p);
       bodyToParticle.set(p.body, p);
       World.add(world, p.body);
-      console.log("Particle Created")
     }
   }
 }

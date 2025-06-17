@@ -6,7 +6,7 @@
       "radius": 15,
       "restitution": 1.01,
       "frictionAir": 0.3,
-      "mouseAttract": 1,
+      "mouseAttract": {},
       "mouseAttractRadius": 100,
       "tags": {},
       "knockRes": {},
