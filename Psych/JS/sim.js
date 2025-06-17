@@ -1,6 +1,6 @@
 const { Engine, Render, Runner, Bodies, World, Vector } = Matter;
 
-const TAG_NAMES = Array.from({ length: 10 }, (_, i) => `tag${i}`);
+const TAG_NAMES = Array.from({ length: 6 }, (_, i) => `tag${i}`);
 
 const engine = Engine.create();
 const world = engine.world;
