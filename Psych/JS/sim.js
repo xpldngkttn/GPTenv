@@ -94,7 +94,7 @@ class Particle {
     this.color = computeColorFromTags(this.tags);
     body.render.fillStyle = this.color;
 
-    if (dist > 30 && this.mouseAttract) {
+    if (mousePressed && dist > 30 && this.mouseAttract) {
       const norm = Vector.normalise(dir);
       const forceMag = this.mouseAttract * 0.01;
       Matter.Body.applyForce(body, body.position, Vector.mult(norm, forceMag));
@@ -152,7 +152,7 @@ function createParticles() {
       const randOpts = {
         ...cls,
         tags: randomTagMap(-1,1),
-        knockRes: randomTagMap(0,0.001),
+        knockRes: randomTagMap(-0.01,0.01),
         attractCoef: randomTagMap(-0.0005, 0.0005),
         suscept: randomTagMap(-1, 1),
         mouseAttract: Math.random(),
@@ -193,6 +193,10 @@ function handleCollision(a, b) {
     b.tags[tag] = Math.min(1, Math.max(-1, bTag + bSus * (aTag - bTag)));
   });
 }
+
+let mousePressed = false;
+document.addEventListener('mousedown', () => { mousePressed = true; });
+document.addEventListener('mouseup', () => { mousePressed = false; });
 
 // Listen for collisions from Matter.js
 Matter.Events.on(engine, 'collisionStart', event => {
