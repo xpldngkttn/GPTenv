@@ -74,7 +74,7 @@ class Particle {
     this.knockRes = opts.knockRes;
     this.mouseAttract = opts.mouseAttract;
     this.attractCoef = opts.attractCoef;
-    this.attractRadius = opts.attractRadius || blankTagMap();
+    this.attractRadius = opts.attractRadius;
     this.mouseAttractradius = opts.mouseAttractRadius;
     this.suscept = opts.suscept;
     this.state = 'idle';
@@ -121,17 +121,24 @@ class Particle {
     const toOther = Vector.sub(other.body.position, this.body.position);
     const dist = Vector.magnitude(toOther);
     TAG_NAMES.forEach(tag => {
-      const val = other.tags[tag] || 0;
-      const kb = val * (this.knockRes[tag] || 0);
-      if (kb && dist < this.radius + other.radius + 20) {
+      const val = other.tags[tag];
+      const kb = val * (this.knockRes[tag]);
+      if (kb && dist < this.radius + other.radius) {
         const norm = Vector.normalise(Vector.mult(toOther, -1));
         Matter.Body.applyForce(this.body, this.body.position, Vector.mult(norm, kb));
       }
-      const att = val * (this.attractCoef[tag] || 0);
-      const radius = this.attractRadius[tag] || 0;
-      if (att && dist > radius) {
+      const att = val * (this.attractCoef[tag]);
+      const radius = this.attractRadius[tag];
+      if (att && (dist > radius)) {
         const norm = Vector.normalise(toOther);
-        Matter.Body.applyForce(this.body, this.body.position, Vector.mult(norm, att));
+        const force = dist > radius ? att : -att;
+        if (dist !== 0) {
+          Matter.Body.applyForce(
+            this.body,
+            this.body.position,
+            Vector.mult(norm, force)
+          );
+        }
       }
     });
   }
@@ -157,7 +164,7 @@ function createParticles() {
         knockRes: randomTagMap(-0.01,0.01),
         attractCoef: randomTagMap(-0.0005, 0.0005),
         suscept: randomTagMap(-1, 1),
-        attractRadius: randomTagMap(20, 100),
+        attractRadius: randomTagMap(200, 300),
         mouseAttract: Math.random(),
       };
       const p = new Particle(
