@@ -74,7 +74,8 @@ class Particle {
     this.knockRes = opts.knockRes;
     this.mouseAttract = opts.mouseAttract;
     this.attractCoef = opts.attractCoef;
-    this.attractRadius = opts.attractRadius;
+    this.outerAttractRadius = opts.outerAttractRadius;
+    this.innerAttractRadius = opts.innerAttractRadius;
     this.mouseAttractradius = opts.mouseAttractRadius;
     this.suscept = opts.suscept;
     this.state = 'idle';
@@ -128,17 +129,16 @@ class Particle {
         Matter.Body.applyForce(this.body, this.body.position, Vector.mult(norm, kb));
       }
       const att = val * (this.attractCoef[tag]);
-      const radius = this.attractRadius[tag];
-      if (att && (dist > radius)) {
+      const inner = this.innerAttractRadius[tag];
+      const outer = this.outerAttractRadius[tag];
+      if (att && dist < outer) {
         const norm = Vector.normalise(toOther);
-        const force = dist > radius ? att : -att;
-        if (dist !== 0) {
-          Matter.Body.applyForce(
-            this.body,
-            this.body.position,
-            Vector.mult(norm, force)
-          );
-        }
+        const force = dist < inner ? -att : att;
+        Matter.Body.applyForce(
+          this.body,
+          this.body.position,
+          Vector.mult(norm, force)
+        );
       }
     });
   }
@@ -164,7 +164,8 @@ function createParticles() {
         knockRes: randomTagMap(-0.01,0.01),
         attractCoef: randomTagMap(-0.0005, 0.0005),
         suscept: randomTagMap(-1, 1),
-        attractRadius: randomTagMap(200, 300),
+        outerAttractRadius: randomTagMap(400, 600),
+        innerAttractRadius: randomTagMap(80, 120),
         mouseAttract: Math.random(),
       };
       const p = new Particle(

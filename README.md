@@ -14,10 +14,11 @@ tag maps to a single hexadecimal digit in the `#RRGGBB` code, so different tag
 combinations produce different colors.
 
 Particle properties like radius and restitution can be tweaked in
-`DEFAULT_PARTICLE_OPTIONS` inside `Psych/JS/sim.js`. Attraction radii are now
-stored per tag in an `attractRadius` map. Values for this map are randomly
-generated for each particle, but can be overridden per class in
-`Psych/config/particles.json`. Attraction forces only apply when two particles
-are farther apart than the corresponding tag radius.
+`DEFAULT_PARTICLE_OPTIONS` inside `Psych/JS/sim.js`. Each tag now has two
+attraction radii: an inner radius and an outer radius. Values for these are
+randomly generated for each particle but can be overridden per class in
+`Psych/config/particles.json`. Attraction is reversed when particles are within
+the inner radius, normal between the inner and outer radii, and ignored
+entirely outside the outer radius.
 
 Open `Psych/index.html` in a browser to see the simulation.
