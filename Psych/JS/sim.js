@@ -17,6 +17,20 @@ const engine = Engine.create();
 const world = engine.world;
 engine.gravity.y = 0;
 
+// Global simulation speed multiplier (1 = normal speed)
+let simSpeed = 1;
+engine.timing.timeScale = simSpeed;
+
+// Expose setter for convenience in console and UI
+window.setSimSpeed = speed => {
+  simSpeed = speed;
+  engine.timing.timeScale = simSpeed;
+  const input = document.getElementById('speedControl');
+  const display = document.getElementById('speedDisplay');
+  if (input) input.value = simSpeed;
+  if (display) display.textContent = simSpeed.toFixed(1);
+};
+
 const width = window.innerWidth;
 const height = window.innerHeight;
 
@@ -203,4 +217,17 @@ function processInteractions() {
 }
 
 loadConfig().then(createParticles);
+
+// Hook up speed slider after DOM loads
+window.addEventListener('DOMContentLoaded', () => {
+  const ctrl = document.getElementById('speedControl');
+  const display = document.getElementById('speedDisplay');
+  if (!ctrl) return;
+  ctrl.value = simSpeed;
+  if (display) display.textContent = simSpeed.toFixed(1);
+  ctrl.addEventListener('input', e => {
+    const val = parseFloat(e.target.value);
+    setSimSpeed(val);
+  });
+});
 
