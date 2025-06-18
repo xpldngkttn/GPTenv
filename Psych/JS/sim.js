@@ -17,6 +17,16 @@ const engine = Engine.create();
 const world = engine.world;
 engine.gravity.y = 0;
 
+// Global simulation speed multiplier (1 = normal speed)
+let simSpeed = 1;
+engine.timing.timeScale = simSpeed;
+
+// Expose setter for convenience in console
+window.setSimSpeed = speed => {
+  simSpeed = speed;
+  engine.timing.timeScale = simSpeed;
+};
+
 const width = window.innerWidth;
 const height = window.innerHeight;
 
