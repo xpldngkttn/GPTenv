@@ -1,0 +1,6 @@
+# VSCode
+.vscode/
+
+# Docker
+Psych/Dockerfile
+Psych/particle-sim.tar
