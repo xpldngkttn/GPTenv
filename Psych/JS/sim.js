@@ -74,6 +74,7 @@ class Particle {
     this.knockRes = opts.knockRes;
     this.mouseAttract = opts.mouseAttract;
     this.attractCoef = opts.attractCoef;
+    this.attractRadius = opts.attractRadius || blankTagMap();
     this.mouseAttractradius = opts.mouseAttractRadius;
     this.suscept = opts.suscept;
     this.state = 'idle';
@@ -127,7 +128,8 @@ class Particle {
         Matter.Body.applyForce(this.body, this.body.position, Vector.mult(norm, kb));
       }
       const att = val * (this.attractCoef[tag] || 0);
-      if (att) {
+      const radius = this.attractRadius[tag] || 0;
+      if (att && dist > radius) {
         const norm = Vector.normalise(toOther);
         Matter.Body.applyForce(this.body, this.body.position, Vector.mult(norm, att));
       }
@@ -155,6 +157,7 @@ function createParticles() {
         knockRes: randomTagMap(-0.01,0.01),
         attractCoef: randomTagMap(-0.0005, 0.0005),
         suscept: randomTagMap(-1, 1),
+        attractRadius: randomTagMap(20, 100),
         mouseAttract: Math.random(),
       };
       const p = new Particle(

@@ -8,6 +8,7 @@
       "frictionAir": 0.3,
       "mouseAttract": {},
       "mouseAttractRadius": 100,
+      "attractRadius": {},
       "tags": {},
       "knockRes": {},
       "attractCoef": {},
