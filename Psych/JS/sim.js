@@ -133,7 +133,7 @@ class Particle {
       const outer = this.outerAttractRadius[tag];
       if (att && dist < outer) {
         const norm = Vector.normalise(toOther);
-        const force = dist < inner ? -att : att;
+        const force = dist < inner ? -5 * Math.abs(att) : att;
         Matter.Body.applyForce(
           this.body,
           this.body.position,
@@ -161,11 +161,11 @@ function createParticles() {
       const randOpts = {
         ...cls,
         tags: randomTagMap(-1,1),
-        knockRes: randomTagMap(-0.01,0.01),
-        attractCoef: randomTagMap(-0.0005, 0.0005),
+        knockRes: randomTagMap(0.0001,0.002),
+        attractCoef: randomTagMap(-0.001, 0.001),
         suscept: randomTagMap(-1, 1),
         outerAttractRadius: randomTagMap(400, 600),
-        innerAttractRadius: randomTagMap(80, 120),
+        innerAttractRadius: randomTagMap(20, 50),
         mouseAttract: Math.random(),
       };
       const p = new Particle(
