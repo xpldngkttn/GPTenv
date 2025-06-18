@@ -8,6 +8,13 @@
   </style>
 </head>
 <body>
+  <div id="controlPanel" style="position:fixed;top:10px;left:10px;color:white;font-family:sans-serif">
+    <label>
+      Speed:
+      <input id="speedControl" type="range" min="0.1" max="3" step="0.1" value="1" />
+      <span id="speedDisplay">1</span>x
+    </label>
+  </div>
   <script src="https://cdn.jsdelivr.net/npm/matter-js"></script>
   <script src="JS/sim.js"></script>
 </body>
