@@ -65,6 +65,37 @@ function randomTagMap(min, max) {
   }, {});
 }
 
+// Return a copy of tags for simple formulas
+function identityTagMap(tags) {
+  return TAG_NAMES.reduce((o, t) => {
+    o[t] = tags[t] || 0;
+    return o;
+  }, {});
+}
+
+function addParticleWithTags(tags) {
+  if (!config) return;
+  const cls = config.classes && config.classes[0] ? config.classes[0] : {};
+  const opts = {
+    ...cls,
+    tags: identityTagMap(tags),
+    knockRes: identityTagMap(tags),
+    attractCoef: identityTagMap(tags),
+    suscept: randomTagMap(-1, 1),
+    outerAttractRadius: randomTagMap(400, 600),
+    innerAttractRadius: randomTagMap(20, 50),
+    mouseAttract: Math.random(),
+  };
+  const p = new Particle(
+    Math.random() * width,
+    Math.random() * height,
+    opts
+  );
+  particles.push(p);
+  bodyToParticle.set(p.body, p);
+  World.add(world, p.body);
+}
+
 class Particle {
   constructor(x, y, options = {}) {
     const opts = options;
@@ -244,5 +275,25 @@ window.addEventListener('DOMContentLoaded', () => {
     const val = parseFloat(e.target.value);
     setSimSpeed(val);
   });
+
+  const btn = document.getElementById('createParticleBtn');
+  if (btn) {
+    btn.addEventListener('click', () => {
+      const vals = [
+        document.getElementById('ieInput'),
+        document.getElementById('snInput'),
+        document.getElementById('tfInput'),
+        document.getElementById('jpInput'),
+        document.getElementById('atInput'),
+        document.getElementById('extraInput'),
+      ].map(inp => parseFloat(inp.value) || 0);
+      const toTagVal = p => Math.max(-1, Math.min(1, (p - 50) / 50));
+      const tagMap = TAG_NAMES.reduce((o, t, i) => {
+        o[t] = toTagVal(vals[i] || 0);
+        return o;
+      }, {});
+      addParticleWithTags(tagMap);
+    });
+  }
 });
 
