@@ -79,8 +79,8 @@ function addParticleWithTags(tags) {
   const opts = {
     ...cls,
     tags: identityTagMap(tags),
-    knockRes: identityTagMap(tags),
-    attractCoef: identityTagMap(tags),
+    knockRes: identityTagMap(0.0001 + (tags-1)/99 * 0.0019),
+    attractCoef: identityTagMap(-0.001 + (tags-1)/99 * 0.002),
     suscept: randomTagMap(-1, 1),
     outerAttractRadius: randomTagMap(400, 600),
     innerAttractRadius: randomTagMap(20, 50),
@@ -91,6 +91,7 @@ function addParticleWithTags(tags) {
     Math.random() * height,
     opts
   );
+  console.log("Creating Particle", p);
   particles.push(p);
   bodyToParticle.set(p.body, p);
   World.add(world, p.body);
@@ -127,7 +128,7 @@ class Particle {
     this.color = computeColorFromTags(this.tags);
     body.render.fillStyle = this.color;
 
-    if (mousePressed && dist > 30 && this.mouseAttract) {
+    if (mousePressed && dist < 300 && this.mouseAttract) {
       const norm = Vector.normalise(dir);
       const forceMag = this.mouseAttract * 0.01;
       Matter.Body.applyForce(body, body.position, Vector.mult(norm, forceMag));
@@ -164,7 +165,7 @@ class Particle {
       const outer = this.outerAttractRadius[tag];
       if (att && dist < outer) {
         const norm = Vector.normalise(toOther);
-        const force = dist < inner ? -5 * Math.abs(att) : att;
+        const force = dist < inner ? -3 * Math.abs(att) : att;
         Matter.Body.applyForce(
           this.body,
           this.body.position,
